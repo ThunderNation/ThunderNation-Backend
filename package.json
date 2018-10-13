@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "name": "ThunderNation-Backend",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThunderNation/ThunderNation-Backend.git"
+  },
+  "keywords": [],
+  "author": "Devansh Desai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThunderNation/ThunderNation-Backend/issues"
+  },
+  "homepage": "https://github.com/ThunderNation/ThunderNation-Backend#readme"
+}
