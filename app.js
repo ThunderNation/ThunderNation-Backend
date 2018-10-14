@@ -1,3 +1,5 @@
+'use strict';
+
 const express= require('express');
 const bodyParser=require('body-parser');
 var cors = require('cors'); 
@@ -19,7 +21,7 @@ var db = admin.firestore();
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-const port = 3000; 
+const port = process.env.port || 8080; 
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World");
@@ -71,9 +73,18 @@ app.get("/getChartData", (req, res) => {
 
     var body = {
         'labels' : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-        'data1' : [65, 59, 80, 81, 56, 55, 40],
-        'data2' : [28, 48, 40, 19, 86, 27, 90]
+        'datasets' : [
+            {
+                'label' : 'My First Dataset',
+                'data' : [65, 59, 80, 81, 56, 55, 40]
+            },
+            {
+                'label' : 'My Second Dataset',
+                'data' : [28, 48, 40, 19, 86, 27, 90]
+            }
+        ]
     }
+    res.send(body);
 
 });
 
@@ -144,3 +155,5 @@ app.use(function(req,res,next){
 app.listen(port, () => {
   console.log("Listening on port " + port);
 });
+
+module.exports = app;
