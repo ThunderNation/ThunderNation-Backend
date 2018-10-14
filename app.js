@@ -67,18 +67,13 @@ app.post("/login", (req, res) => {
     
 });
 
-app.get("/profile", (req, res) => {
+app.get("/getChartData", (req, res) => {
 
-    var userId = req.header('username');
-    db.collection('users').doc(userId).get()
-    .then((snapshot) => {    
-        
-        res.send(snapshot.data());
-    })
-    .catch((err) => {
-        res.status(400).send("Error");
-        console.log('Error getting documents', err);
-    });
+    var body = {
+        'labels' : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        'data1' : [65, 59, 80, 81, 56, 55, 40],
+        'data2' : [28, 48, 40, 19, 86, 27, 90]
+    }
 
 });
 
