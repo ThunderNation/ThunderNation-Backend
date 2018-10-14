@@ -88,6 +88,48 @@ app.get("/getChartData", (req, res) => {
 
 });
 
+app.get("/getChartData2", (req, res) => {
+
+    var body = {
+        'labels' : ['Fossil Fuels', 'Nuclear', 'Renewable', 'Other Sources'],
+        'datasets': [
+            {
+                'label':'Fossil Fuels 2017',
+                'data': [62.7]
+            },
+            {
+                'label':'Nuclear 2017',
+                'data': [20.0]
+            },
+            {
+                'label':'Renewable 2017',
+                'data': [17.1]
+            },
+            {
+                'label':'Other Sources 2017',
+                'data': [0.2]
+            }
+        ]
+            
+    }
+    res.send(body);
+
+});
+
+app.get("/getChartData3", (req, res) => {
+
+    var body = {
+        'labels' : [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017],
+        'dataset' : [{
+            'label': 'Renewable Usage Since 2000',
+            'data': [11.06, 10.80, 9.38, 7.70, 8.90, 9.15, 8.85, 8.82, 
+                    9.49, 8.49, 9.25, 10.5, 10.36, 12.52, 12.22, 12.69, 13.19, 13.35, 14.94, 17.12]
+        }]
+    }
+    res.send(body);
+
+});
+
 app.get("/profile", (req, res) => {
 
     var userId = req.header('username');
