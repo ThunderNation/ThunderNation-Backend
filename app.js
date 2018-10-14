@@ -1,3 +1,5 @@
+'use strict';
+
 const express= require('express');
 const bodyParser=require('body-parser');
 var cors = require('cors'); 
@@ -19,7 +21,7 @@ var db = admin.firestore();
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-const port = 3000; 
+const port = process.env.port || 8080; 
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World");
@@ -71,9 +73,18 @@ app.get("/getChartData", (req, res) => {
 
     var body = {
         'labels' : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-        'data1' : [65, 59, 80, 81, 56, 55, 40],
-        'data2' : [28, 48, 40, 19, 86, 27, 90]
+        'datasets' : [
+            {
+                'label' : 'My First Dataset',
+                'data' : [65, 59, 80, 81, 56, 55, 40]
+            },
+            {
+                'label' : 'My Second Dataset',
+                'data' : [28, 48, 40, 19, 86, 27, 90]
+            }
+        ]
     }
+    res.send(body);
 
 });
 
@@ -135,6 +146,122 @@ app.get("/test", (req, res) => {
 
 });
 
+app.post("/newPost", (req, res) => {
+
+    db.collection('forums').doc().get()
+    .then((snapshot) => {    
+        
+        var createdAt = new Date();
+        var forum = db.collection('forums').doc();
+        var setForum = forum.set({
+            'author': req.body.author,
+            'title': req.body.title,
+            'content': req.body.content,
+            'lightbulbs': 0,
+            'uniqueViews': 0,
+            'createdAt': createdAt
+        });
+    
+        res.status(200).send({"status": "Successfully Created the forum posts"});
+        
+    })
+    .catch((err) => {
+        res.status(400).send("Error");
+        console.log('Error user does not exist.', err);
+    });
+
+});
+
+app.get("/getAllForums", (req, res) => {
+
+    db.collection('forums').get()
+    .then((snapshot) => {
+        var response = []
+        snapshot.forEach((doc) => {
+            // console.log(doc.id, '=>', doc.data());
+            var body = {
+                'forumId' : doc.id,
+                'forumInfo' : doc.data()
+            }
+            response.push(body)
+        });
+        res.send(response);
+    })
+    .catch((err) => {
+        res.status(400).send("Error");
+        console.log('Error getting documents', err);
+    });
+
+});
+
+app.get("/getForum", (req, res) => {
+
+    db.collection('forums').doc(req.header('forumId')).get()
+    .then((snapshot) => {   
+        res.send(snapshot.data());
+    })
+    .catch((err) => {
+        res.status(400).send("Error");
+        console.log('Error getting documents', err);
+    });
+
+});
+
+app.post("/addComment", (req, res) => {
+
+    db.collection('users').doc(req.body.author).get()
+    .then((snapshot) => {    
+        
+        var createdAt = new Date();
+        var comment = db.collection('responses').doc(req.body.forumId).collection('comments').doc();
+        var setComment = comment.set({
+            'author': req.body.author,
+            'comment': req.body.comment,
+            'lightbulbs': 0,
+            'createdAt': createdAt
+        });
+    
+        res.status(200).send({"status": "Successfully added the comments"});
+        
+    })
+    .catch((err) => {
+        res.status(400).send("Error");
+        console.log('Error user does not exist.', err);
+    });
+
+});
+
+app.get("/viewComments", (req, res) => {
+
+    db.collection('users').doc(req.header('userId')).get()
+    .then((snapshot) => {    
+        
+        var createdAt = new Date();
+        var comment = db.collection('responses').doc(req.header('forumId')).collection('comments').get()
+        .then((snapshot) => {
+            var response = []
+            snapshot.forEach((doc) => {
+                // console.log(doc.id, '=>', doc.data());
+                var body = {
+                    'commentId' : doc.id,
+                    'commentInfo' : doc.data()
+                }
+                response.push(body)
+            });
+            res.send(response);
+        })
+        .catch((err) => {
+            res.status(400).send("Error");
+            console.log('Error getting documents', err);
+        });
+    })
+    .catch((err) => {
+        res.status(400).send("Error");
+        console.log('Error user does not exist.', err);
+    });
+
+});
+
 app.use(function(req,res,next){
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -144,3 +271,5 @@ app.use(function(req,res,next){
 app.listen(port, () => {
   console.log("Listening on port " + port);
 });
+
+module.exports = app;
